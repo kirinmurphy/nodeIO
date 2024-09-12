@@ -4,6 +4,7 @@ const { createFileProcessor } = require('./createFileProcessor');
 const { convertWavToMp3 } = require('./actions/convertWavToMp3');
 const { moveFile } = require('./actions/moveFile');
 
+// TODO: make configurable from the command line 
 const watchDir = createDir(['watch']);
 const processedDir = createDir(['processed']);
 const movedDir = createDir(['processed', 'orig']);
@@ -11,8 +12,12 @@ const movedDir = createDir(['processed', 'orig']);
 const fileProcessor = createFileProcessor({ 
   watchDir, 
   processAction: async ({ filename, filePath }) => {
-    await convertWavToMp3({ filename, watchDir, processedDir: processedDir });
-    await moveFile({ filename, filePath, processedDir: movedDir });
+    try {
+      await convertWavToMp3({ filename, watchDir, processedDir });
+      await moveFile({ filename, filePath, processedDir: movedDir });
+    } catch (err) {
+      console.error(err);
+    }
   }
 });
 

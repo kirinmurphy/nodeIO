@@ -15,6 +15,7 @@ function createFileProcessor ({ watchDir, processAction }) {
         if ( activeFiles.has(filePath) ) { return; }
 
         handleFileIfExists({ filePath, handler: () => {
+          activeFiles.add(filePath); 
           void processFile(filePath, filename);
         }});
       }
@@ -41,9 +42,6 @@ function createFileProcessor ({ watchDir, processAction }) {
 
 function handleFileIfExists ({ filePath, handler }) {
   if (path.basename(filePath) === '.DS_Store') { return; }
-
-  activeFiles.add(filePath); 
-  
   fs.access(filePath, fs.constants.F_OK, (err) => {
     if (!err) { handler(); }
   });

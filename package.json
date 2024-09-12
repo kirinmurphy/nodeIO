@@ -1,0 +1,19 @@
+{
+  "name": "nodeio",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "enableMp3Copy": "node fileManager/init.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kirinmurphy/nodeIO.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/kirinmurphy/nodeIO/issues"
+  },
+  "homepage": "https://github.com/kirinmurphy/nodeIO#readme",
+  "description": ""
+}

@@ -16,6 +16,7 @@ function convertWavToMp3 ({ filename, watchDir, processedDir }) {
     const ffmpeg = spawn('ffmpeg', [
       '-i', inputPath,
       '-acodec', 'libmp3lame',
+      // TODO: how do we control bit rate? 
       // 'b:a', '256k',
       '-f', 'mp3',
       '-progress', 'pipe:1',
@@ -41,7 +42,7 @@ function convertWavToMp3 ({ filename, watchDir, processedDir }) {
         if (match && totalTime) {
           const processedTimeInFile = parseInt(match[1]) / 1000;
           const percent = Math.floor(processedTimeInFile / totalTime * 100);
-          process.stdout.write(`\nProcessing ${croppedFilename}: ${elapsedTime.toFixed(2)} seconds elapsed, ${percent}% complete`);
+          process.stdout.write(`\nProcessing ${croppedFilename}: ${elapsedTime.toFixed(2)}s, ${percent}% complete`);
         }
 
         lastLoginTime = now;
@@ -50,21 +51,10 @@ function convertWavToMp3 ({ filename, watchDir, processedDir }) {
 
     ffmpeg.stderr.on('data', data => {
       const output = data.toString();
-      // if (totalTime) {
-      //   console.log('>><< HAS TOTAL TIME FOR: ', filename, totalTime);
-      // }
       if (!totalTime) {
-        console.log('<<>> NO TOTAL TIME FOR: ', filename);
-        // console.log('<<<<<<data', output);
         const durationMatch = output.match(/Duration: (\d{2}):(\d{2}):(\d{2})\.(\d{2})/);
         if (durationMatch) {
-          const [, hours, minutes, seconds, centiseconds] = durationMatch;
-          const hourMs = parseInt(hours) * 3600 * 1000;
-          const minuteMs = parseInt(minutes) * 60 * 1000;
-          const secondMs = parseInt(seconds) * 1000;
-          const centisecondsMs = parseInt(centiseconds) * 10;
-          totalTime = hourMs + minuteMs + secondMs + centisecondsMs;
-          // console.log('!!!!!!durationing', totalTime);
+          totalTime = getTotalMs(durationMatch);
         }
       }      
     });
@@ -85,4 +75,13 @@ function convertWavToMp3 ({ filename, watchDir, processedDir }) {
 
 module.exports = {
   convertWavToMp3
+}
+
+function getTotalMs (durationMatch) {
+  const [, hours, minutes, seconds, centiseconds] = durationMatch;
+  const hourMs = parseInt(hours) * 3600 * 1000;
+  const minuteMs = parseInt(minutes) * 60 * 1000;
+  const secondMs = parseInt(seconds) * 1000;
+  const centisecondsMs = parseInt(centiseconds) * 10;
+  return hourMs + minuteMs + secondMs + centisecondsMs;
 }
