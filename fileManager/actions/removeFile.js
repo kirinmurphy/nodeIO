@@ -1,9 +1,5 @@
-const fs = require('fs');
+import fs from 'fs';
 
-async function removeFile ({ filePath }) {
+export async function removeFile ({ filePath }) {
   await fs.promises.unlink(filePath);
-}
-
-module.exports = {
-  removeFile
 }

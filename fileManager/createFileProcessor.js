@@ -1,10 +1,10 @@
-const fs = require('fs');
-const path = require('path');
-const EventEmitter = require('events');
+import fs from 'fs';
+import path from 'path';
+import EventEmitter from 'events';
 
 const activeFiles = new Set();
 
-function createFileProcessor ({ watchDir, processAction }) {
+export function createFileProcessor ({ watchDir, processAction }) {
   const emitter = new EventEmitter();
 
   function start () {
@@ -45,8 +45,4 @@ function handleFileIfExists ({ filePath, handler }) {
   fs.access(filePath, fs.constants.F_OK, (err) => {
     if (!err) { handler(); }
   });
-}
-
-module.exports = {
-  createFileProcessor
 }

@@ -1,9 +1,12 @@
-const fs = require('fs');
-const path = require('path');
-const { createFileProcessor } = require('./createFileProcessor');
-const { convertWavToMp3 } = require('./actions/convertWavToMp3');
-const { moveFile } = require('./actions/moveFile');
+import fs from 'fs';
+import path from 'path';
+import { createFileProcessor } from './createFileProcessor.js';
+import { convertWavToMp3 } from './actions/convertWavToMp3.js';
+import { moveFile } from './actions/moveFile.js';
+import { fileURLToPath } from 'url';
 
+
+const __dirname = getDirname();
 // TODO: make configurable from the command line 
 const watchDir = createDir(['watch']);
 const processedDir = createDir(['processed']);
@@ -44,4 +47,9 @@ function createDir (folderNames) {
   const fileDestination = path.join(__dirname, ...folderNames);
   fs.mkdirSync(fileDestination, { recursive: true });  
   return fileDestination
+}
+
+function getDirname () {
+  const __filename = fileURLToPath(import.meta.url);
+  return path.dirname(__filename);    
 }

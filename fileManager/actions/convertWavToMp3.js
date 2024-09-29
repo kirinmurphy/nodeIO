@@ -1,7 +1,7 @@
-const path = require('path');
-const { spawn } = require('child_process');
+import path from 'path';
+import { spawn } from 'child_process';
 
-function convertWavToMp3 ({ filename, watchDir, processedDir }) {
+export function convertWavToMp3 ({ filename, watchDir, processedDir }) {
   return new Promise((resolve, reject) => {
     const fileExtension = path.extname(filename).toLowerCase();
     const isWav = fileExtension === '.wav';
@@ -71,10 +71,6 @@ function convertWavToMp3 ({ filename, watchDir, processedDir }) {
       reject(new Error(`<<<<<<< FFmpeg process error: ${err.message} >>>>>>>`));
     });
   });
-}
-
-module.exports = {
-  convertWavToMp3
 }
 
 function getTotalMs (durationMatch) {
