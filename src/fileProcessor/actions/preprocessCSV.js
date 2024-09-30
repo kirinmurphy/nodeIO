@@ -1,29 +1,28 @@
 import fs from 'fs';
+import { once } from 'events';
 import { createObjectCsvWriter } from 'csv-writer';
 
-
-export function preprocessCSV ({ inputFile, outputFile, csvParser, newHeadersMap }) {
+export async function preprocessCSV ({ inputFile, outputFile, csvParser, newHeadersMap }) {
   let rows = [];
 
-  fs.createReadStream(inputFile, 'utf8')
-    .pipe(csvParser)
-    .on('data', chunk => {
-      rows.push(chunk);
-    })
-    .on('end', () => {
-      console.log('Finished reading this file.');
-      const csvWriter = createObjectCsvWriter({
-        path: outputFile,
-        header: newHeadersMap.map(header => ({ id: header, title: header }))
-      });
+  const readStream = fs.createReadStream(inputFile, 'utf8').pipe(csvParser);
 
-      csvWriter.writeRecords(rows)
-        .then(() => {
-          console.log('CSV file successfully processed and saved as', outputFile);
-        })
-        .catch(err => console.error('Error writing CSV file: ', err));
-    })
-    .on('error', (err) => {
-      console.error('Error reading teh file:', err);
+  readStream.on('data', chunk => {
+    rows.push(chunk);
+  });
+
+  try {
+    await once(readStream, 'end');
+    console.log(`Finished reading ${inputFile}`);
+
+    const csvWriter = createObjectCsvWriter({
+      path: outputFile,
+      header: newHeadersMap.map(header => ({ id: header, title: header }))
     });
+
+    await csvWriter.writeRecords(rows);
+    console.log('CSV file successfully processed and saved as', outputFile);
+  } catch (err) {
+    console.error('Error writing CSV file: ', err)
+  }
 }
