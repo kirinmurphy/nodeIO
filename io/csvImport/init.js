@@ -1,7 +1,9 @@
 import { getDirname, createDir } from '../../src/utils/createDir.js';
 import { createFileProcessor } from '../../src/fileProcessor/createFileProcessor.js';
 import { moveFile } from '../../src/fileProcessor/actions/moveFile.js';
+import { removeFile } from '../../src/fileProcessor/actions/removeFile.js';
 import { preprocessCT } from './preprocessCT.js';
+import { importCSV } from './importCSV.js';
 
 const __dirname = getDirname(import.meta.url);
 const watchDir = createDir(__dirname, ['temp', 'watch']);
@@ -14,8 +16,10 @@ const csvImporter = createFileProcessor({
   watchDir, 
   processAction: async ({ filename, filePath }) => {
     try {
-      await preprocessCT({ filename, filePath, processedDir });
-      await moveFile({ filename, filePath, processedDir: movedDir });
+      const preprocessedFile = await preprocessCT({ filename, filePath, processedDir });
+      await importCSV({ filePath: preprocessedFile });
+      void removeFile({ filePath: preprocessedFile });
+      void moveFile({ filename, filePath, processedDir: movedDir });
     } catch (err) {
       console.error(err);
     }

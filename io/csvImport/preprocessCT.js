@@ -51,5 +51,7 @@ export async function preprocessCT (props) {
     
   });
 
-  preprocessCSV({ inputFile, outputFile, csvParser, newHeadersMap });
+  await preprocessCSV({ inputFile, outputFile, csvParser, newHeadersMap });
+
+  return outputFile;
 }
