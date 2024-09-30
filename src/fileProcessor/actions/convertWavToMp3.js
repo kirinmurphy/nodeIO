@@ -1,7 +1,7 @@
 import path from 'path';
 import { spawn } from 'child_process';
 
-export function convertWavToMp3 ({ filename, watchDir, processedDir }) {
+export function convertWavToMp3 ({ filename, filePath, processedDir }) {
   return new Promise((resolve, reject) => {
     const fileExtension = path.extname(filename).toLowerCase();
     const isWav = fileExtension === '.wav';
@@ -10,11 +10,10 @@ export function convertWavToMp3 ({ filename, watchDir, processedDir }) {
         return;
     }
 
-    const inputPath = path.join(watchDir, filename);
     const outputPath = path.join(processedDir, `${path.parse(filename).name}.mp3`);
 
     const ffmpeg = spawn('ffmpeg', [
-      '-i', inputPath,
+      '-i', filePath,
       '-acodec', 'libmp3lame',
       // TODO: how do we control bit rate? 
       // 'b:a', '256k',

@@ -4,7 +4,8 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "enableCSVImport": "node fileManager/init.js"
+    "csvImport": "node io/csvImport/init.js",
+    "createMp3": "node io/createMp3/init.js"
   },
   "repository": {
     "type": "git",
