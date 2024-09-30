@@ -1,22 +1,19 @@
-import fs from 'fs';
-import path from 'path';
 import { createFileProcessor } from './createFileProcessor.js';
-import { convertWavToMp3 } from './actions/convertWavToMp3.js';
 import { moveFile } from './actions/moveFile.js';
-import { fileURLToPath } from 'url';
+import { preprocessCB } from '../csvImporter/preprocessCB.js';
+import { getDirname, createDir } from './utils/createDir.js';
 
-
-const __dirname = getDirname();
 // TODO: make configurable from the command line 
-const watchDir = createDir(['watch']);
-const processedDir = createDir(['processed']);
-const movedDir = createDir(['processed', 'orig']);
+const __dirname = getDirname(import.meta.url);
+const watchDir = createDir(__dirname, ['watch']);
+const processedDir = createDir(__dirname, ['processed']);
+const movedDir = createDir(__dirname, ['processed', 'orig']);
 
 const fileProcessor = createFileProcessor({ 
   watchDir, 
   processAction: async ({ filename, filePath }) => {
     try {
-      await convertWavToMp3({ filename, watchDir, processedDir });
+      await preprocessCB({ filename, filePath, processedDir });
       await moveFile({ filename, filePath, processedDir: movedDir });
     } catch (err) {
       console.error(err);
@@ -42,14 +39,3 @@ process.on('SIGINT', () => {
   // Perform any necessary cleanup here
   process.exit(0);
 });
-
-function createDir (folderNames) {
-  const fileDestination = path.join(__dirname, ...folderNames);
-  fs.mkdirSync(fileDestination, { recursive: true });  
-  return fileDestination
-}
-
-function getDirname () {
-  const __filename = fileURLToPath(import.meta.url);
-  return path.dirname(__filename);    
-}

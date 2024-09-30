@@ -4,7 +4,7 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "enableMp3Copy": "node fileManager/init.js"
+    "enableCSVImport": "node fileManager/init.js"
   },
   "repository": {
     "type": "git",
@@ -16,5 +16,9 @@
     "url": "https://github.com/kirinmurphy/nodeIO/issues"
   },
   "homepage": "https://github.com/kirinmurphy/nodeIO#readme",
-  "description": ""
+  "description": "",
+  "dependencies": {
+    "csv-parser": "^3.0.0",
+    "csv-writer": "^1.6.0"
+  }
 }
